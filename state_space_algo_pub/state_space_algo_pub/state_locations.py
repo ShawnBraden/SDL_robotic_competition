@@ -9,8 +9,11 @@ import rclpy
 from rclpy.node import Node
 from geometry_msgs.msg import PoseStamped #pylint: disable=e0401
 
-#custom built imports
-from DTOs.state_dto import state_dto
+#other ros2 nodes imports
+from state_sim_interface.srv import ArmyStateService
+
+#custom python imports
+from state_space_algo_pub.DTOs.state_dto import state_dto
 
 #create function pointers to make things esiar to code and read
 cos = numpy.cos
@@ -50,9 +53,9 @@ class state_locations(Node):
         super().__init__(node_name="StateSpaceSim")
 
         #create publisher, this will publish the position to the rest of the system.
-        self.pub_pos = self.create_publisher(PoseStamped, "pose", 10)
+        self.srv_pos = self.create_service(ArmyStateService, "army_state_service", self.calc)
 
-    def calc(self, state_dto_obj : state_dto):
+    def calc(self, request, response):
         '''
             This function uses the state_dto give to it and then populats the 
             final state informations.
@@ -77,10 +80,13 @@ class state_locations(Node):
             
         '''
         #get our rotation matix
-        beta = state_dto_obj.get_beta()
-        theta1 = state_dto_obj.get_theta1()
-        theta2 = state_dto_obj.get_theta2()
-        theta3 = state_dto_obj.get_theta3()
+        beta = request.beta
+        theta1 = request.theta1
+        theta2 = request.theta2
+        theta3 = request.theta3
+
+        #create the state obj to store the data
+        state_dto_obj = state_dto(theta1=theta1, theta2=theta2, theta3=theta3, beta=beta)
 
         Ry = matix([[cos(beta), 0, sin(beta)],[0,1,0],[sin(beta), 0, cos(beta)]])
 
@@ -95,8 +101,21 @@ class state_locations(Node):
 
         state_dto_obj.set_Ma_p(state)
 
-    def main():
-        pass  
+        pose = PoseStamped()
+        pose.pose.orientation.x = state[0]
+        pose.pose.orientation.y = state[1]
+        pose.pose.orientation.z = state[2]
+        pose.pose.orientation.w = 0
+
+        return pose
+
+def main(args=None):
+    rclpy.init(args=args)
+    state_service = state_locations()
+
+    rclpy.spin(state_service)
+
+    rclpy.shutdown()
 
 if __name__ == '__main__':
     x = state_locations()
