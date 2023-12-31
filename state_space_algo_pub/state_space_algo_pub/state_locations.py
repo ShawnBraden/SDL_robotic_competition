@@ -1,14 +1,24 @@
+'''
+    This modules is the poblisher for the poss of the robot
+'''
+#python pkgs imports
 import numpy
-import sys
-sys.path.insert(0,'../')
+
+#ros2 imports
+import rclpy
+from rclpy.node import Node
+from geometry_msgs.msg import PoseStamped #pylint: disable=e0401
+
+#custom built imports
 from DTOs.state_dto import state_dto
 
+#create function pointers to make things esiar to code and read
 cos = numpy.cos
 sin = numpy.sin
 matix = numpy.array
 
 
-class state_locations:
+class state_locations(Node):
     def __init__(self, L1 : float = 10, L2 : float = 10, L3 : float = 10) -> None:
         '''
             This class takes in a few theats and then out puts the final state of the mainipluator, and
@@ -30,9 +40,17 @@ class state_locations:
             NOTE : all the data is passed using the state_dto class
             NOTE: Everythin is done using Rads
         '''
+        #set up paramiters for the class
         self.__L1 = L1
         self.__L2 = L2
         self.__L3 = L3
+        
+        #------ROS Set up section------
+        #class the parent class constructor
+        super().__init__(node_name="StateSpaceSim")
+
+        #create publisher, this will publish the position to the rest of the system.
+        self.pub_pos = self.create_publisher(PoseStamped, "pose", 10)
 
     def calc(self, state_dto_obj : state_dto):
         '''
@@ -76,7 +94,9 @@ class state_locations:
         state = numpy.dot(Ry, matix([[x1],[x2],[0]]))
 
         state_dto_obj.set_Ma_p(state)
-            
+
+    def main():
+        pass  
 
 if __name__ == '__main__':
     x = state_locations()
