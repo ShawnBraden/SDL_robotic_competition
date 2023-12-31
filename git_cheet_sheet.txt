@@ -1,0 +1,10 @@
+git clone -url to git repo-
+git add -path to file/s to add-
+git commit -m 'something about what you just did'
+git push origin <the branch I want to push too>
+git checkout -b new_branch_name
+git checkout branch_name
+git status
+git merge
+ 
+If you have a merge conflict, or need to merge talk to shawn. 
