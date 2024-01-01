@@ -22,6 +22,10 @@ matix = numpy.array
 
 
 class state_locations(Node):
+    '''
+        This class is the Node that handles the state space simulation. It takes in the three thetas and beta then 
+        returns the possition of the robot
+    '''
     def __init__(self, L1 : float = 10, L2 : float = 10, L3 : float = 10) -> None:
         '''
             This class takes in a few theats and then out puts the final state of the mainipluator, and
@@ -41,7 +45,7 @@ class state_locations(Node):
                 Ma_p : Maniplator poss -> type numpy.array (x,y,z)
             
             NOTE : all the data is passed using the state_dto class
-            NOTE: Everythin is done using Rads
+            NOTE: Everythin is done using Rads not degrees
         '''
         #set up paramiters for the class
         self.__L1 = L1
@@ -125,11 +129,5 @@ def main(args=None):
     rclpy.shutdown()
 
 if __name__ == '__main__':
-    x = state_locations()
-    dto = state_dto(numpy.pi/4, numpy.pi/4, numpy.pi/4, numpy.pi)
-    print(dto)
-    print()
-    print('Calculating: ')
-    x.calc(dto)
-    print(dto)
+    main()
     
