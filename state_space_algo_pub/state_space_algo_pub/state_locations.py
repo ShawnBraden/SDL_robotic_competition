@@ -57,6 +57,8 @@ class state_locations(Node):
 
     def calc(self, request, response):
         '''
+            ROS2 NOTE: This function is what is tied to the service call back
+
             This function uses the state_dto give to it and then populats the 
             final state informations.
 
@@ -79,6 +81,7 @@ class state_locations(Node):
                 [z]   [                 0                          ]
             
         '''
+
         #get our rotation matix
         beta = request.beta
         theta1 = request.theta1
@@ -102,14 +105,18 @@ class state_locations(Node):
         state_dto_obj.set_Ma_p(state)
 
         pose = PoseStamped()
-        pose.pose.orientation.x = state[0]
-        pose.pose.orientation.y = state[1]
-        pose.pose.orientation.z = state[2]
-        pose.pose.orientation.w = 0
+        pose.pose.orientation.x = state[0][0]
+        pose.pose.orientation.y = state[1][0]
+        pose.pose.orientation.z = state[2][0]
 
-        return pose
+        response.pose_stamped = pose #assign return val to the response
+
+        return response
 
 def main(args=None):
+    '''
+        main function, starts the node, right now it is just single threaded 
+    '''
     rclpy.init(args=args)
     state_service = state_locations()
 

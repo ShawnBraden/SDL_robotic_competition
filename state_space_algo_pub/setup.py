@@ -20,7 +20,8 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-            'state_sim = state_space_algo_pub.state_locations:main'
+            'state_sim = state_space_algo_pub.state_locations:main',
+            'state_test_client = state_space_algo_pub.test_service_request:main'
         ],
     },
 )
