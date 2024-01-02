@@ -4,3 +4,5 @@ float64 theta3
 float64 beta
 ---
 geometry_msgs/PoseStamped pose_stamped
+---
+bool vaild

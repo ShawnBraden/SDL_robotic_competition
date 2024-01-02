@@ -7,10 +7,11 @@ import numpy
 #ros2 imports
 import rclpy
 from rclpy.node import Node
+from rclpy.action import ActionServer
 from geometry_msgs.msg import PoseStamped #pylint: disable=e0401
 
 #other ros2 nodes imports
-from state_sim_interface.srv import ArmyStateService
+from state_sim_interface.action import ArmyStateAction
 
 #custom python imports
 from state_space_algo_pub.DTOs.state_dto import state_dto
@@ -56,10 +57,16 @@ class state_locations(Node):
         #class the parent class constructor
         super().__init__(node_name="StateSpaceSim")
 
-        #create publisher, this will publish the position to the rest of the system.
-        self.srv_pos = self.create_service(ArmyStateService, "army_state_service", self.calc)
+        #create the Action server, this will publish the position to the rest of the system.
+        self._action_server = ActionServer(
+            self,
+            ArmyStateAction,
+            'army_state_action',
+            self.calc)
+        
+        self.__request = 0
 
-    def calc(self, request, response):
+    def calc(self, goal_handle):
         '''
             ROS2 NOTE: This function is what is tied to the service call back
 
@@ -85,12 +92,14 @@ class state_locations(Node):
                 [z]   [                 0                          ]
             
         '''
+        self.__request += 1
+        print(f"Request {self.__request}")
 
         #get our rotation matix
-        beta = request.beta
-        theta1 = request.theta1
-        theta2 = request.theta2
-        theta3 = request.theta3
+        beta = goal_handle.request.beta
+        theta1 = goal_handle.request.theta1
+        theta2 = goal_handle.request.theta2
+        theta3 = goal_handle.request.theta3
 
         #create the state obj to store the data
         state_dto_obj = state_dto(theta1=theta1, theta2=theta2, theta3=theta3, beta=beta)
@@ -113,7 +122,10 @@ class state_locations(Node):
         pose.pose.orientation.y = state[1][0]
         pose.pose.orientation.z = state[2][0]
 
+        response = ArmyStateAction.Result()
         response.pose_stamped = pose #assign return val to the response
+
+        goal_handle.succeed()
 
         return response
 
