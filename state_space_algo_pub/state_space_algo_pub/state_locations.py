@@ -3,14 +3,19 @@
 '''
 #python pkgs imports
 import numpy
+import threading
+import time
 
 #ros2 imports
 import rclpy
 from rclpy.node import Node
 from geometry_msgs.msg import PoseStamped #pylint: disable=e0401
+from rclpy.callback_groups import MutuallyExclusiveCallbackGroup
+from rclpy.executors import MultiThreadedExecutor
 
 #other ros2 nodes imports
 from state_sim_interface.srv import ArmyStateService
+from state_sim_interface.msg import PoseRequestPub
 
 #custom python imports
 from state_space_algo_pub.DTOs.state_dto import state_dto
@@ -56,10 +61,56 @@ class state_locations(Node):
         #class the parent class constructor
         super().__init__(node_name="StateSpaceSim")
 
-        #create publisher, this will publish the position to the rest of the system.
-        self.srv_pos = self.create_service(ArmyStateService, "army_state_service", self.calc)
+        #create call back groups
+        self.__request_cb = MutuallyExclusiveCallbackGroup()
+        self.__processing_cb = MutuallyExclusiveCallbackGroup()
 
-    def calc(self, request, response):
+        #create the queue
+        self.__queue = []
+        self.__queue_lock = threading.Lock()
+
+        #create publisher, this will the position to the rest of the system.
+        self.pub_pos = self.create_publisher(PoseRequestPub, "pose_request", 10)
+
+        #create service for reciving the possition calculations
+        self.srv_pos = self.create_service(ArmyStateService, "army_state_service", self.collect_request, callback_group = self.__request_cb)
+
+        #create a call back timer for processing the services
+        self.processing_timer = self.create_timer(timer_period_sec=1, callback=self.process, callback_group=self.__processing_cb)
+
+    def collect_request(self, request, response):
+        '''
+            This function collects the request and populates it into the queue for futer processing
+        '''
+        with self.__queue_lock:
+            #collect the request
+            beta = request.beta
+            theta1 = request.theta1
+            theta2 = request.theta2
+            theta3 = request.theta3
+            id = request.id
+
+            #append the request to the queue
+            self.__queue.append([beta, theta1, theta2, theta3, id])
+
+            #tell the client the request was recived
+            recived = True
+            response.recived = recived
+            return response
+    def process(self):
+        '''
+            This function handles the requsts that have been passed into the queue. 
+            It then calls the calc function 
+        '''
+        length = 0
+        with self.__queue_lock:
+            length = len(self.__queue)
+        for i in range(length):
+            with self.__queue_lock:
+                temp = self.__queue.pop(0)
+                print(temp)
+            self.calc(temp)
+    def calc(self, request):
         '''
             ROS2 NOTE: This function is what is tied to the service call back
 
@@ -87,10 +138,11 @@ class state_locations(Node):
         '''
 
         #get our rotation matix
-        beta = request.beta
-        theta1 = request.theta1
-        theta2 = request.theta2
-        theta3 = request.theta3
+        beta = request[0]
+        theta1 = request[1]
+        theta2 = request[2]
+        theta3 = request[3]
+        id = request[4]
 
         #create the state obj to store the data
         state_dto_obj = state_dto(theta1=theta1, theta2=theta2, theta3=theta3, beta=beta)
@@ -113,9 +165,17 @@ class state_locations(Node):
         pose.pose.orientation.y = state[1][0]
         pose.pose.orientation.z = state[2][0]
 
-        response.pose_stamped = pose #assign return val to the response
+        #create the message
+        pos_request_mesage = PoseRequestPub()
+        pos_request_mesage.theta1 = theta1
+        pos_request_mesage.theta2 = theta2
+        pos_request_mesage.theta3 = theta3
+        pos_request_mesage.beta = beta
+        pos_request_mesage.id = id
+        pos_request_mesage.pose_stamped = pose #assign return val to the response
 
-        return response
+        #publish message
+        self.pub_pos.publish(pos_request_mesage)        
 
 def main(args=None):
     '''
@@ -124,9 +184,16 @@ def main(args=None):
     rclpy.init(args=args)
     state_service = state_locations()
 
-    rclpy.spin(state_service)
+    # rclpy.spin(state_service)
 
-    rclpy.shutdown()
+    # rclpy.shutdown()
+    exec = MultiThreadedExecutor()
+    exec.add_node(state_service)
+    ros_thread = threading.Thread(target=exec.spin, daemon=True)
+    ros_thread.start()
+    while(rclpy.ok()):
+        time.sleep(1)
+    ros_thread.join()
 
 if __name__ == '__main__':
     main()

@@ -9,6 +9,7 @@ from rclpy.node import Node
 
 #other ros2 nodes imports
 from state_sim_interface.srv import ArmyStateService
+from state_sim_interface.msg import PoseRequestPub
 
 #python imports
 import numpy
@@ -30,7 +31,17 @@ class test_service_request(Node):
         self.req = ArmyStateService.Request()
         self.future = None # define for future use
 
-    def send_request(self, theta1, theta2, theta3, beta):
+        #create a subscriber to collect the pos_request publisher
+        self.subcription =  self.create_subscription(
+            PoseRequestPub,
+            'pose_request',
+            self.listener_callback,
+            10)
+    
+    def listener_callback(self, msg):
+        print(f'Pos recived: \n{msg}')
+
+    def send_request(self, theta1, theta2, theta3, beta, id):
         '''
             Sends a request then waits for the response. 
         '''
@@ -38,7 +49,7 @@ class test_service_request(Node):
         self.req.theta2 = theta2
         self.req.theta3 = theta3
         self.req.beta = beta
-
+        self.req.id = id
         
         self.future = self.cli.call_async(self.req)
         rclpy.spin_until_future_complete(self, self.future)
@@ -52,12 +63,18 @@ def main(args=None):
     rclpy.init(args=args)
 
     client = test_service_request()
-    for _ in range(100):
-        response = client.send_request(float(sys.argv[1]) * numpy.pi / 180,float(sys.argv[2])* numpy.pi / 180,float(sys.argv[3])* numpy.pi / 180,float(sys.argv[4])* numpy.pi / 180)
+    
+    #send request
+    for i in range(10000):
+        response = client.send_request(float(sys.argv[1]) + i * numpy.pi / 180,float(sys.argv[2]) + i * numpy.pi / 180,float(sys.argv[3]) + i * numpy.pi / 180,float(sys.argv[4]) + i * numpy.pi / 180, i)
     client.get_logger().info(f'Possition:\n {response}')
 
+    #spin node and wait for response
+    rclpy.spin(client)
     client.destroy_node()
     rclpy.shutdown()
+
+    
 
 
 if __name__ == '__main__':

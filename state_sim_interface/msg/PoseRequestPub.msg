@@ -3,5 +3,4 @@ float64 theta2
 float64 theta3
 float64 beta
 int64 id
----
-bool recived
+geometry_msgs/PoseStamped pose_stamped
