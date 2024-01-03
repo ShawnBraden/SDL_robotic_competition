@@ -4,12 +4,12 @@
     Calls the services, then prints what is returned.
 '''
 #ros imports
-import rclpy
-from rclpy.node import Node
+import rclpy #pylint: disable=e0401
+from rclpy.node import Node #pylint: disable=e0401
 
 #other ros2 nodes imports
-from state_sim_interface.srv import ArmyStateService
-from state_sim_interface.msg import PoseRequestPub
+from state_sim_interface.srv import ArmyStateService #pylint: disable=e0401
+from state_sim_interface.msg import PoseRequestPub #pylint: disable=e0401
 
 #python imports
 import numpy
@@ -39,9 +39,12 @@ class test_service_request(Node):
             10)
     
     def listener_callback(self, msg):
+        '''
+            This function is the callback for when a pos_request message is published
+        '''
         print(f'Pos recived: \n{msg}')
 
-    def send_request(self, theta1, theta2, theta3, beta, id):
+    def send_request(self, theta1, theta2, theta3, beta, req_id):
         '''
             Sends a request then waits for the response. 
         '''
@@ -49,7 +52,7 @@ class test_service_request(Node):
         self.req.theta2 = theta2
         self.req.theta3 = theta3
         self.req.beta = beta
-        self.req.id = id
+        self.req.id = req_id
         
         self.future = self.cli.call_async(self.req)
         rclpy.spin_until_future_complete(self, self.future)

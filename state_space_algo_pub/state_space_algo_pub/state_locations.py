@@ -7,15 +7,15 @@ import threading
 import time
 
 #ros2 imports
-import rclpy
-from rclpy.node import Node
+import rclpy #pylint: disable=e0401
+from rclpy.node import Node #pylint: disable=e0401
 from geometry_msgs.msg import PoseStamped #pylint: disable=e0401
-from rclpy.callback_groups import MutuallyExclusiveCallbackGroup
-from rclpy.executors import MultiThreadedExecutor
+from rclpy.callback_groups import MutuallyExclusiveCallbackGroup #pylint: disable=e0401
+from rclpy.executors import MultiThreadedExecutor #pylint: disable=e0401
 
 #other ros2 nodes imports
-from state_sim_interface.srv import ArmyStateService
-from state_sim_interface.msg import PoseRequestPub
+from state_sim_interface.srv import ArmyStateService #pylint: disable=e0401
+from state_sim_interface.msg import PoseRequestPub #pylint: disable=e0401
 
 #custom python imports
 from state_space_algo_pub.DTOs.state_dto import state_dto
@@ -88,10 +88,10 @@ class state_locations(Node):
             theta1 = request.theta1
             theta2 = request.theta2
             theta3 = request.theta3
-            id = request.id
+            req_id = request.id
 
             #append the request to the queue
-            self.__queue.append([beta, theta1, theta2, theta3, id])
+            self.__queue.append([beta, theta1, theta2, theta3, req_id])
 
             #tell the client the request was recived
             recived = True
@@ -105,7 +105,7 @@ class state_locations(Node):
         length = 0
         with self.__queue_lock:
             length = len(self.__queue)
-        for i in range(length):
+        for _ in range(length):
             with self.__queue_lock:
                 temp = self.__queue.pop(0)
                 print(temp)
@@ -142,7 +142,7 @@ class state_locations(Node):
         theta1 = request[1]
         theta2 = request[2]
         theta3 = request[3]
-        id = request[4]
+        req_id = request[4]
 
         #create the state obj to store the data
         state_dto_obj = state_dto(theta1=theta1, theta2=theta2, theta3=theta3, beta=beta)
@@ -171,7 +171,7 @@ class state_locations(Node):
         pos_request_mesage.theta2 = theta2
         pos_request_mesage.theta3 = theta3
         pos_request_mesage.beta = beta
-        pos_request_mesage.id = id
+        pos_request_mesage.id = req_id
         pos_request_mesage.pose_stamped = pose #assign return val to the response
 
         #publish message
@@ -187,11 +187,11 @@ def main(args=None):
     # rclpy.spin(state_service)
 
     # rclpy.shutdown()
-    exec = MultiThreadedExecutor()
-    exec.add_node(state_service)
-    ros_thread = threading.Thread(target=exec.spin, daemon=True)
+    ros_exec = MultiThreadedExecutor()
+    ros_exec.add_node(state_service)
+    ros_thread = threading.Thread(target=ros_exec.spin, daemon=True)
     ros_thread.start()
-    while(rclpy.ok()):
+    while rclpy.ok():
         time.sleep(1)
     ros_thread.join()
 
