@@ -39,8 +39,8 @@ Devin Nielsen -Contributer
     To complie .md to a pdf: pandoc -s README.md -V geometry:margin=1in -o README.pdf
     To complie to a stand alone html doc: pandoc  --metadata title="README" -s --self-contained README.md -o README.html
 
-## Linting
-This is the method that is used to check the code and make sure it fits coding standar and best pratice. The package is called `pylint` and can be installed with \
+## Linting (Grading your code, and making sure it matches our coding standars)
+This is the method that is used to check the code and make sure it fits coding standar and best pratice. The package is called `pylint` and can be installed with 
 ``` python
     pip install pylint  
 ```
