@@ -13,7 +13,7 @@ from geometry_msgs.msg import PoseStamped #pylint: disable=e0401
 from rclpy.callback_groups import MutuallyExclusiveCallbackGroup #pylint: disable=e0401
 from rclpy.executors import MultiThreadedExecutor #pylint: disable=e0401
 
-#other ros2 nodes imports
+#Custom ros2 nodes imports
 from state_sim_interface.srv import ArmyStateService #pylint: disable=e0401
 from state_sim_interface.msg import PoseRequestPub #pylint: disable=e0401
 
@@ -24,7 +24,6 @@ from state_space_algo_pub.DTOs.state_dto import state_dto
 cos = numpy.cos
 sin = numpy.sin
 matix = numpy.array
-
 
 class state_locations(Node):
     '''
@@ -56,6 +55,10 @@ class state_locations(Node):
         self.__L1 = L1
         self.__L2 = L2
         self.__L3 = L3
+
+        #create the queue
+        self.__queue = []
+        self.__queue_lock = threading.Lock()
         
         #------ROS Set up section------
         #class the parent class constructor
@@ -65,10 +68,6 @@ class state_locations(Node):
         self.__request_cb = MutuallyExclusiveCallbackGroup()
         self.__processing_cb = MutuallyExclusiveCallbackGroup()
 
-        #create the queue
-        self.__queue = []
-        self.__queue_lock = threading.Lock()
-
         #create publisher, this will the position to the rest of the system.
         self.pub_pos = self.create_publisher(PoseRequestPub, "pose_request", 10)
 
@@ -77,26 +76,24 @@ class state_locations(Node):
 
         #create a call back timer for processing the services
         self.processing_timer = self.create_timer(timer_period_sec=1, callback=self.process, callback_group=self.__processing_cb)
-
     def collect_request(self, request, response):
         '''
             This function collects the request and populates it into the queue for futer processing
         '''
+        
+        beta = request.beta
+        theta1 = request.theta1
+        theta2 = request.theta2
+        theta3 = request.theta3
+        req_id = request.id
         with self.__queue_lock:
             #collect the request
-            beta = request.beta
-            theta1 = request.theta1
-            theta2 = request.theta2
-            theta3 = request.theta3
-            req_id = request.id
-
             #append the request to the queue
             self.__queue.append([beta, theta1, theta2, theta3, req_id])
-
-            #tell the client the request was recived
-            recived = True
-            response.recived = recived
-            return response
+        #tell the client the request was recived
+        recived = True
+        response.recived = recived
+        return response
     def process(self):
         '''
             This function handles the requsts that have been passed into the queue. 
@@ -108,7 +105,6 @@ class state_locations(Node):
         for _ in range(length):
             with self.__queue_lock:
                 temp = self.__queue.pop(0)
-                print(temp)
             self.calc(temp)
     def calc(self, request):
         '''
@@ -160,10 +156,31 @@ class state_locations(Node):
 
         state_dto_obj.set_Ma_p(state)
 
+        #create Ma pose stamp
         pose = PoseStamped()
         pose.pose.orientation.x = state[0][0]
         pose.pose.orientation.y = state[1][0]
         pose.pose.orientation.z = state[2][0]
+
+
+        #TODO: populate the end points of each link
+        #create X1 pose stamp
+        pose_x1 = PoseStamped()
+        pose_x1.pose.orientation.x = 0
+        pose_x1.pose.orientation.y = 0
+        pose_x1.pose.orientation.z = 0
+
+        #create X2 pose stamp
+        pose_x2 = PoseStamped()
+        pose_x2.pose.orientation.x = 0
+        pose_x2.pose.orientation.y = 0
+        pose_x2.pose.orientation.z = 0
+
+        #create X3 pose stamp
+        pose_x3 = PoseStamped()
+        pose_x3.pose.orientation.x = 0
+        pose_x3.pose.orientation.y = 0
+        pose_x3.pose.orientation.z = 0
 
         #create the message
         pos_request_mesage = PoseRequestPub()
@@ -172,14 +189,17 @@ class state_locations(Node):
         pos_request_mesage.theta3 = theta3
         pos_request_mesage.beta = beta
         pos_request_mesage.id = req_id
-        pos_request_mesage.pose_stamped = pose #assign return val to the response
+        pos_request_mesage.pose_stamped = pose #assign poss
+        pos_request_mesage.pose_stamped_l1 = pose_x1 #assign poss
+        pos_request_mesage.pose_stamped_l2 = pose_x2 #assign poss
+        pos_request_mesage.pose_stamped_l3 = pose_x3 #assign poss
+        pos_request_mesage.vaild = True
 
         #publish message
         self.pub_pos.publish(pos_request_mesage)        
-
 def main(args=None):
     '''
-        main function, starts the node, right now it is just single threaded 
+        main function, starts the node
     '''
     rclpy.init(args=args)
     state_service = state_locations()
@@ -194,7 +214,6 @@ def main(args=None):
     while rclpy.ok():
         time.sleep(1)
     ros_thread.join()
-
 if __name__ == '__main__':
     main()
     

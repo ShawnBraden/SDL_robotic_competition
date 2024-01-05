@@ -4,3 +4,7 @@ float64 theta3
 float64 beta
 int64 id
 geometry_msgs/PoseStamped pose_stamped
+geometry_msgs/PoseStamped pose_stamped_l1
+geometry_msgs/PoseStamped pose_stamped_l2
+geometry_msgs/PoseStamped pose_stamped_l3
+bool vaild

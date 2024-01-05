@@ -28,6 +28,7 @@ class state_dto:
         self.__X3_p = -1
         self.__Ma_p = -1
         self.__vaild = False
+        self._id = -1
     ### GETTERS ###
     def get_theta1(self):
         # pylint: disable=missing-function-docstring
@@ -56,7 +57,9 @@ class state_dto:
     def is_vaild(self):
         # pylint: disable=missing-function-docstring
         return self.__vaild
-    
+    def get_id(self):
+        # pylint: disable=missing-function-docstring
+        return self.__id
     ### Setters ###
     def set_theta1(self, theta1:float):
         # pylint: disable=missing-function-docstring
@@ -85,6 +88,8 @@ class state_dto:
     def set_vaild(self, vaild:bool):
         # pylint: disable=missing-function-docstring
         self.__vaild = vaild
+    def set_id(self, id:int):
+        self.__id = id
     def __str__(self) -> str:
         '''
             This function prints the dto 
