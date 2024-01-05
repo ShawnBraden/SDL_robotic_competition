@@ -141,46 +141,53 @@ class state_locations(Node):
         req_id = request[4]
 
         #create the state obj to store the data
-        state_dto_obj = state_dto(theta1=theta1, theta2=theta2, theta3=theta3, beta=beta)
-
-        Ry = matix([[cos(beta), 0, sin(beta)],[0,1,0],[sin(beta), 0, cos(beta)]])
+        Ry = matix([[cos(beta), 0, sin(beta)],
+                    [0,1,0],
+                    [sin(beta), 0, cos(beta)]])
 
         alpha1 = theta1
         alpha2 = alpha1 + theta2 - (numpy.pi /2)
         alpha3 = alpha2 + theta3 - (numpy.pi /2)
 
-        x1 = self.__L1 * cos(alpha1) + self.__L2 * cos(alpha2) + self.__L3 * cos(alpha3)
-        x2 = self.__L1 * sin(alpha1) + self.__L2 * sin(alpha2) + self.__L3 * sin(alpha3)
+
+        #create X1 pose stamp
+        x1 = self.__L1 * cos(alpha1)
+        x2 = self.__L1 * sin(alpha1)
 
         state = numpy.dot(Ry, matix([[x1],[x2],[0]]))
 
-        state_dto_obj.set_Ma_p(state)
+        pose_x1 = PoseStamped()
+        pose_x1.pose.orientation.x = state[0][0]
+        pose_x1.pose.orientation.y = state[1][0]
+        pose_x1.pose.orientation.z = state[2][0]
+
+        #create X2 pose stamp
+        x1 = x1 + self.__L2 * cos(alpha2)
+        x2 = x2 + self.__L2 * sin(alpha2)
+
+        state = numpy.dot(Ry, matix([[x1],[x2],[0]]))
+
+        pose_x2 = PoseStamped()
+        pose_x2.pose.orientation.x = state[0][0]
+        pose_x2.pose.orientation.y = state[1][0]
+        pose_x2.pose.orientation.z = state[2][0]
+
+        #create X3 pose stamp
+        x1 = x1 + self.__L3 * cos(alpha3)
+        x2 = x2 + self.__L3 * sin(alpha3)
+
+        state = numpy.dot(Ry, matix([[x1],[x2],[0]]))
+
+        pose_x3 = PoseStamped()
+        pose_x3.pose.orientation.x = state[0][0]
+        pose_x3.pose.orientation.y = state[1][0]
+        pose_x3.pose.orientation.z = state[2][0]
 
         #create Ma pose stamp
         pose = PoseStamped()
-        pose.pose.orientation.x = state[0][0]
-        pose.pose.orientation.y = state[1][0]
-        pose.pose.orientation.z = state[2][0]
-
-
-        #TODO: populate the end points of each link
-        #create X1 pose stamp
-        pose_x1 = PoseStamped()
-        pose_x1.pose.orientation.x = 0
-        pose_x1.pose.orientation.y = 0
-        pose_x1.pose.orientation.z = 0
-
-        #create X2 pose stamp
-        pose_x2 = PoseStamped()
-        pose_x2.pose.orientation.x = 0
-        pose_x2.pose.orientation.y = 0
-        pose_x2.pose.orientation.z = 0
-
-        #create X3 pose stamp
-        pose_x3 = PoseStamped()
-        pose_x3.pose.orientation.x = 0
-        pose_x3.pose.orientation.y = 0
-        pose_x3.pose.orientation.z = 0
+        pose.pose.orientation.x = 0
+        pose.pose.orientation.y = 0
+        pose.pose.orientation.z = 0
 
         #create the message
         pos_request_mesage = PoseRequestPub()

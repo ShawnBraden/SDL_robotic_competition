@@ -6,6 +6,7 @@
 '''
 #ros imports
 import rclpy #pylint: disable=e0401
+import random
 from rclpy.node import Node #pylint: disable=e0401
 from geometry_msgs.msg import PoseStamped #pylint: disable=e0401
 from rclpy.callback_groups import MutuallyExclusiveCallbackGroup #pylint: disable=e0401
@@ -35,12 +36,16 @@ class rrt_tree(Node):
         You can ask it for a path between two poins, it will then calculate 
         it and return the path.
     '''
-    def __init__(self, seed :int = 10, L1 : float = 10, L2 : float = 10, L3 : float = 10) -> None:
+    def __init__(self, seed :int = 10, L1 : float = 10, L2 : float = 10, L3 : float = 10, max_theta1 : float = numpy.pi/2, max_theta2 : float = numpy.pi/2, max_theta3 : float = numpy.pi/2, max_beta : float = 2*numpy.pi) -> None:
         '''
             Parameters:
                 L1 : Length of first link -> float
                 L2 : Length of sencond link -> float
                 L3 : Length of third link -> float
+                max_theta1 : maximum relative angle of the first joint -> float
+                max_theta2 : maximum relative angle of the second joint -> float
+                max_theta3 : maximum relative angle of the third joint -> float
+                max_beta : maximum rotational angle of the base (should allow full rotation) ->
                 Seed : Random seed -> int
             Inputs: 
                 None
@@ -51,6 +56,12 @@ class rrt_tree(Node):
         self.__L1 = L1
         self.__L2 = L2
         self.__L3 = L3
+
+        self.__max_theta1 = max_theta1
+        self.__max_theta2 = max_theta2
+        self.__max_theta3 = max_theta3
+        self.__max_beta = max_beta
+
         self.__seed = seed
 
         #create the queues
@@ -126,9 +137,29 @@ class rrt_tree(Node):
         self.future = self.cli.call_async(self.req)
         rclpy.spin_until_future_complete(self, self.future)
         return self.future.result()  
+    def generate_random_angles(self):
+        '''
+            this class generates the random angles for the seed
+            inputs:
+                none
+            outputs:
+                random angles theta1, theta2, theta3, beta
+        '''
+        theta1 = random.random() * self.__max_theta1
+        theta2 = random.random() * self.__max_theta2
+        theta3 = random.random() * self.__max_theta3
+        beta = random.random() * self.__max_beta
+
+        return theta1, theta2, theta3, beta
+
+    
     def create_rrt(self, request, response):
         seed = request.seed
+        random.seed(seed)
         print('Called rrt')
+
+        
+        
         response.success = True
         return response
 def main(args=None):
