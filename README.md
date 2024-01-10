@@ -53,7 +53,7 @@ depending on context. The command to run `pylint` is:
     python3 -m pylint --jobs 0 --rcfile .pylintrc <name of python file or folder>
 ```
 ## Compling with ros
-1. Install Ros2.
+1. Install Ros2. (https://docs.ros.org/en/humble/Installation/Ubuntu-Install-Debians.html)
 2. Set up the following Alias.
     ```bash
     alias make_venv='python3 -m venv --system-site-packages venv && touch venv/COLCON_IGNORE && source venv/bin/activate && rosdep install --from-paths src --ignore-src -r -y'
