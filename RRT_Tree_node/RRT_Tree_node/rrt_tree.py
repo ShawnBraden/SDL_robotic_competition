@@ -153,14 +153,12 @@ class rrt_tree(Node):
         beta = random.random() * self.__max_beta
 
         return theta1, theta2, theta3, beta
-
-    
     def create_rrt(self, request, response):
         seed = request.seed
         random.seed(seed)
         print('Called rrt')
 
-        
+
         
         response.success = True
         return response

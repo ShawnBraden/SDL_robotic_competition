@@ -214,10 +214,10 @@ class state_locations(Node):
         pos_request_mesage.theta3 = theta3
         pos_request_mesage.beta = beta
         pos_request_mesage.id = req_id
-        pos_request_mesage.pose_stamped = pose #assign poss
-        pos_request_mesage.pose_stamped_l1 = pose_x1 #assign poss
-        pos_request_mesage.pose_stamped_l2 = pose_x2 #assign poss
-        pos_request_mesage.pose_stamped_l3 = pose_x3 #assign poss
+        pos_request_mesage.pose_stamped = pose #assign poss of manipulator
+        pos_request_mesage.pose_stamped_l1 = pose_x1 #assign poss of link 1
+        pos_request_mesage.pose_stamped_l2 = pose_x2 #assign poss of link 2
+        pos_request_mesage.pose_stamped_l3 = pose_x3 #assign poss of link 3
         pos_request_mesage.vaild = True
 
         #publish message

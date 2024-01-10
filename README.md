@@ -6,12 +6,49 @@ Shawn Jones -Team lead\
 Taryn Jones -Contributer\
 Devin Nielsen -Contributer
 # Nodes 
-## `state_loations`:
+## `state_locations`:
 
     This node recives requests from the ArmyStateService.srv, it then computes the location of the end point and publishes the info on the PoseRequestPub.msg
+### Running
+1. In one terminal run 
+    ```bash
+    ros2 run state_space_algo_pub state_sim
+    ```
+2. In a second run 
+    ```bash
+    ros2 run state_space_algo_pub state_test_client
+    ```
+Note: You may need to build the ros2 repo first.
 ## `test_service_request`:
     
     This node test the state_location node. It sends a buch of requests and then listens for the response.
+### Running
+1. In one terminal run 
+    ```bash
+    ros2 run state_space_algo_pub state_sim
+    ```
+2. In a second run 
+    ```bash
+    ros2 run state_space_algo_pub state_test_client
+    ```
+Note: You may need to build the ros2 repo first.
+## `rrt_tree`:
+    This node build the rrt tree that we then use to do path planning.
+### Running
+1. In one terminal run 
+    ```bash
+    ros2 run state_space_algo_pub state_sim
+    ```
+2. In a second run 
+    ```bash
+    ros2 run RRT_Tree_node start_tree
+    ```
+3. Then in a third run 
+    ```bash
+    ros2 run RRT_Tree_node test_tree 10
+    ```
+    Note: the 10 is the random seed arg that gets pass to the start_tree service.
+Note: You may need to build the ros2 repo first.
 
 # Messages
 ## `PoseRequestPub.msg`:
