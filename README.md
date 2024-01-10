@@ -53,6 +53,7 @@ depending on context. The command to run `pylint` is:
     python3 -m pylint --jobs 0 --rcfile .pylintrc <name of python file or folder>
 ```
 ## Compling with ros
+0. Have the wsl or ubuntu 22.04, with python 3.10 installed.
 1. Install Ros2. (https://docs.ros.org/en/humble/Installation/Ubuntu-Install-Debians.html)
 2. Set up the following Alias.
     ```bash
@@ -74,16 +75,20 @@ depending on context. The command to run `pylint` is:
     ```bash
     make_venv
     ```
-8. build the repo.
+    NOTE: if you need to install venv here is the command.
+   ```bash
+   sudo apt install python3.10-venv
+   ```
+9. build the repo.
     ```bash
     build
     ```
-9. Run a ros2 node.
+10. Run a ros2 node.
     ```ros2
     ros2 run <work space> <node>
     Ex: ros2 run state_space_algo_pub state_sim
     ```
-10. Running a ros2 node with args
+11. Running a ros2 node with args
     ```ros2
     ros2 run <work space> <node> <arg> ... <arg>
     EX: ros2 run state_space_algo_pub state_test_client 90 90 90 270
