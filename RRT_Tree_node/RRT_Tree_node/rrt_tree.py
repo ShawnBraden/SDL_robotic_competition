@@ -63,6 +63,8 @@ class rrt_tree(Node):
         self.__max_beta = max_beta
 
         self.__seed = seed
+        self.__current_id = 0
+        self.__tree_data = {}
 
         #create the queues
         self.__random_points_queue = []
