@@ -56,6 +56,9 @@ class state_locations(Node):
         self.__L2 = L2
         self.__L3 = L3
 
+        self.__children = []
+        self.parent = "-1"
+
         #create the queue
         self.__queue = []
         self.__queue_lock = threading.Lock()
@@ -106,6 +109,21 @@ class state_locations(Node):
             with self.__queue_lock:
                 temp = self.__queue.pop(0)
             self.calc(temp)
+    
+    def add_child(self, child):
+        '''
+            This function adds a new child to the que of children
+        '''
+        self.__children.append(child)
+
+    def get_number_of_children(self):
+        '''
+            This function returns the number of children to the current node
+        '''
+        return len(self.__children)
+
+    
+
     def calc(self, request):
         '''
             ROS2 NOTE: This function is what is tied to the service call back
