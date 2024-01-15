@@ -1,0 +1,70 @@
+<mxfile host="app.diagrams.net" modified="2024-01-15T00:15:42.868Z" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:121.0) Gecko/20100101 Firefox/121.0" etag="7QzpMPuRmDaipghmFPSK" version="22.1.18" type="device">
+  <diagram name="Page-1" id="sxHIAVm-k_eZXE1shbJ6">
+    <mxGraphModel dx="1050" dy="530" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="HChsyTFDlCrWgKr9EKky-11" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="HChsyTFDlCrWgKr9EKky-1" target="HChsyTFDlCrWgKr9EKky-2">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="HChsyTFDlCrWgKr9EKky-1" value="YOLO Image Identification " style="shape=process;whiteSpace=wrap;html=1;backgroundOutline=1;" vertex="1" parent="1">
+          <mxGeometry x="200" y="140" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="HChsyTFDlCrWgKr9EKky-12" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="HChsyTFDlCrWgKr9EKky-2" target="HChsyTFDlCrWgKr9EKky-4">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="HChsyTFDlCrWgKr9EKky-2" value="&lt;div&gt;Probabilistic Mab&lt;/div&gt;&lt;div&gt;Generation&lt;br&gt; &lt;/div&gt;" style="shape=process;whiteSpace=wrap;html=1;backgroundOutline=1;" vertex="1" parent="1">
+          <mxGeometry x="360" y="140" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="HChsyTFDlCrWgKr9EKky-3" value="Interface control" style="shape=process;whiteSpace=wrap;html=1;backgroundOutline=1;" vertex="1" parent="1">
+          <mxGeometry x="520" y="140" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="HChsyTFDlCrWgKr9EKky-21" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" edge="1" parent="1" source="HChsyTFDlCrWgKr9EKky-4" target="HChsyTFDlCrWgKr9EKky-2">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="HChsyTFDlCrWgKr9EKky-4" value="Motion planner" style="shape=process;whiteSpace=wrap;html=1;backgroundOutline=1;" vertex="1" parent="1">
+          <mxGeometry x="360" y="240" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="HChsyTFDlCrWgKr9EKky-9" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="HChsyTFDlCrWgKr9EKky-5" target="HChsyTFDlCrWgKr9EKky-2">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="HChsyTFDlCrWgKr9EKky-5" value="3D Map generation " style="shape=process;whiteSpace=wrap;html=1;backgroundOutline=1;" vertex="1" parent="1">
+          <mxGeometry x="200" y="240" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="HChsyTFDlCrWgKr9EKky-7" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="HChsyTFDlCrWgKr9EKky-6" target="HChsyTFDlCrWgKr9EKky-1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="HChsyTFDlCrWgKr9EKky-8" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="HChsyTFDlCrWgKr9EKky-6" target="HChsyTFDlCrWgKr9EKky-5">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="HChsyTFDlCrWgKr9EKky-6" value="&lt;div&gt;Camera&amp;nbsp;&lt;/div&gt;&lt;div&gt;Input&lt;/div&gt;" style="whiteSpace=wrap;html=1;aspect=fixed;" vertex="1" parent="1">
+          <mxGeometry x="20" y="160" width="80" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="HChsyTFDlCrWgKr9EKky-14" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=1;entryY=0.65;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" source="HChsyTFDlCrWgKr9EKky-3" target="HChsyTFDlCrWgKr9EKky-4">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="580" y="280" />
+              <mxPoint x="500" y="280" />
+              <mxPoint x="500" y="279" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="HChsyTFDlCrWgKr9EKky-17" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="HChsyTFDlCrWgKr9EKky-16" target="HChsyTFDlCrWgKr9EKky-3">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="HChsyTFDlCrWgKr9EKky-16" value="User input" style="whiteSpace=wrap;html=1;aspect=fixed;" vertex="1" parent="1">
+          <mxGeometry x="730" y="130" width="80" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="HChsyTFDlCrWgKr9EKky-18" value="List of classified objections" style="whiteSpace=wrap;html=1;aspect=fixed;" vertex="1" parent="1">
+          <mxGeometry x="730" y="30" width="80" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="HChsyTFDlCrWgKr9EKky-19" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.013;entryY=0.425;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" source="HChsyTFDlCrWgKr9EKky-1" target="HChsyTFDlCrWgKr9EKky-18">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="HChsyTFDlCrWgKr9EKky-20" value="Aggie Astro Arm Software design" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="10" y="10" width="120" height="60" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
