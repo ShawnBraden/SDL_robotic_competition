@@ -7,18 +7,21 @@ class state_dto:
     '''
         This class holds all the info for the state of the robot arm 
     '''
-    def __init__(self, theta1:float, theta2:float, theta3:float, beta:float) -> None:
+    def __init__(self, theta1:float, theta2:float, theta3:float, beta:float, my_id:str, parent_id:str) -> None:
         '''
             This class holds all the need information for the state.
 
             Inputs:
-                theta1, theta2, theta3, beta
+                theta1, theta2, theta3, beta, my_id, parent_id
             Outputs:
                 X1_p : fist link poss -> type tuple (x,y,z)
                 X2_p : Second link poss -> type tuple (x,y,z)
                 X3_p : Third link poss -> type tuple (x,y,z)
                 Ma_p : Maniplator poss -> type tuple (x,y,z)
         '''
+        self.__id = my_id
+        self.__parent_id = parent_id
+        self.__children_id = []
         self.__theta1 = theta1
         self.__theta2 = theta2
         self.__theta3 = theta3
@@ -28,7 +31,7 @@ class state_dto:
         self.__X3_p = -1
         self.__Ma_p = -1
         self.__vaild = False
-        self._id = -1
+        
     ### GETTERS ###
     def get_theta1(self):
         # pylint: disable=missing-function-docstring
@@ -88,8 +91,22 @@ class state_dto:
     def set_vaild(self, vaild:bool):
         # pylint: disable=missing-function-docstring
         self.__vaild = vaild
-    def set_id(self, id:int):
-        self.__id = id
+    def set_id(self, my_id:str):
+        self.__id = my_id
+    def get_my_id(self):
+        return self.__id
+    def get_parent_id(self):
+        return self.__parent_id
+    def set_parent_id(self, parent_id:str):
+        self.__parent_id = parent_id
+    def add_child_id(self, child_id:str):
+        if self.__children_id.count(child_id) == 0:
+            self.__children_id.append(child_id)
+    def remove_child_id(self, child_id:str):
+        if self.__children_id.count(child_id) != 0:
+            self.__children_id.remove(child_id)
+    def get_childred_id(self):
+        return self.__children_id
     def __str__(self) -> str:
         '''
             This function prints the dto 
