@@ -37,13 +37,14 @@ class rrt_tree(Node):
         You can ask it for a path between two poins, it will then calculate 
         it and return the path.
     '''
-    def __init__(self, itterations : int = 10, seed : int = 10, L1 : float = 10, L2 : float = 10, L3 : float = 10,  min_theta1 : float = 0, min_theta2 : float = 0, min_theta3 : float = 0, min_beta : float = 0, max_theta1 : float = numpy.pi/2, max_theta2 : float = numpy.pi/2, max_theta3 : float = numpy.pi/2, max_beta : float = 2*numpy.pi) -> None:
+    def __init__(self, itterations : int = 10, seed : int = 10, max_delta : float = np.pi/90, L1 : float = 10, L2 : float = 10, L3 : float = 10,  min_theta1 : float = 0, min_theta2 : float = 0, min_theta3 : float = 0, min_beta : float = 0, max_theta1 : float = numpy.pi/2, max_theta2 : float = numpy.pi/2, max_theta3 : float = numpy.pi/2, max_beta : float = 2*numpy.pi) -> None:
         '''
             Parameters:
                 itterations : Number of itterations the tree runs for -> int
                 L1 : Length of first link -> float
                 L2 : Length of sencond link -> float
                 L3 : Length of third link -> float
+                max_delta : maximum amount any angle can change between states ->
                 min_theta1 : maximum relative angle of the first joint -> float
                 min_theta2 : maximum relative angle of the second joint -> float
                 min_theta3 : maximum relative angle of the third joint -> float
@@ -60,6 +61,8 @@ class rrt_tree(Node):
         '''
         #set up paramiters for the class
         self.__itterations = itterations
+
+        self.__max_delta = max_delta
 
         self.__L1 = L1
         self.__L2 = L2
@@ -178,6 +181,9 @@ class rrt_tree(Node):
             c_theta1, c_theta2, c_theta3, c_beta = self.generate_random_angles()
             minimum_angle_difference = float('inf')
             minimum_angle_parent_id = ""
+
+            goal_theta1, goal_theta2, goal_theta3, goal_beta = c_theta1, c_theta2, c_theta3, c_beta
+
             parent_id = "root"
             if self.__current_id != 0:
                 for potential_parent_id in self.__tree_data:
@@ -190,7 +196,54 @@ class rrt_tree(Node):
                     if angle_difference < minimum_angle_difference:
                         minimum_angle_difference = angle_difference
                         minimum_angle_parent_id = potential_parent_id
-                self.__tree_data[current_id] = state_dto(c_theta1, c_theta2, c_theta3, c_beta, current_id, minimum_angle_parent_id)
+                        goal_theta1, goal_theta2, goal_theta3, goal_beta = new_theta1, new_theta2, new_theta3, new_beta
+
+            delta_theta1 = goal_theta1 - c_theta1
+            delta_theta2 = goal_theta2 - c_theta2
+            delta_theta3 = goal_theta3 - c_theta3
+            delta_beta = goal_beta - c_beta
+                # correct changes in angles that are greater than the maximum
+            if abs(delta_theta1) > self.__max_delta:
+                delta_theta1 = (delta_theta1/abs(delta_theta1))*self.__max_delta
+
+            if abs(delta_theta2) > self.__max_delta:
+                delta_theta2 = (delta_theta2/abs(delta_theta2))*self.__max_delta
+
+            if abs(delta_theta3) > self.__max_delta:
+                delta_theta3 = (delta_theta3/abs(delta_theta3))*self.__max_delta
+
+            if abs(delta_beta) > self.__max_delta:
+                delta_beta = (delta_beta/abs(delta_beta))*self.__max_delta
+
+            next_theta1 = c_theta1 + delta_theta1
+            next_theta2 = c_theta2 + delta_theta2
+            next_theta3 = c_theta3 + delta_theta3
+            next_beta = c_beta + delta_beta
+
+            # make sure that the new angles don't exceed the limits
+            if (next_theta1 < self.__min_theta1):
+                next_theta1 = self.__min_theta1
+            elif (next_theta1 > self.__max_theta1):
+                next_theta1 = self.__max_theta1
+
+            if (next_theta2 < self.__min_theta2):
+                next_theta2 = self.__min_theta2
+            elif (next_theta2 > self.__max_theta2):
+                next_theta2 = self.__max_theta2
+
+            if (next_theta3 < self.__min_theta3):
+                next_theta3 = self.__min_theta3
+            elif (next_theta3 > self.__max_theta3):
+                next_theta3 = self.__max_theta3
+
+            if (next_beta < self.__min_beta):
+                next_beta = self.__min_beta
+            elif (next_beta > self.__max_beta):
+                next_beta = self.__max_beta
+
+
+
+            self.__tree_data[current_id] = state_dto(next_theta1, next_theta2, next_theta3, next_beta, current_id, minimum_angle_parent_id)
 
 
 
