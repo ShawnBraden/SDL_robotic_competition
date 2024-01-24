@@ -82,6 +82,8 @@ class rrt_tree(Node):
         self.__current_id = 0
         self.__tree_data = {}
 
+        self.__generated = False
+
 
 
         #create the queues
@@ -185,18 +187,18 @@ class rrt_tree(Node):
             goal_theta1, goal_theta2, goal_theta3, goal_beta = c_theta1, c_theta2, c_theta3, c_beta
 
             parent_id = "root"
-            if self.__current_id != 0:
-                for potential_parent_id in self.__tree_data:
-                    potential_parent = self.__tree_data[potential_parent_id]
-                    new_theta1 = potential_parent.get_theta1()
-                    new_theta2 = potential_parent.get_theta2()
-                    new_theta3 = potential_parent.get_theta3()
-                    new_beta = potential_parent.get_beta()
-                    angle_difference = np.sqrt(((new_theta1 - c_theta1)**2)+((new_theta2 - c_theta2)**2)+((new_theta3 - c_theta3)**2)+((new_beta - c_beta)**2))
-                    if angle_difference < minimum_angle_difference:
-                        minimum_angle_difference = angle_difference
-                        minimum_angle_parent_id = potential_parent_id
-                        goal_theta1, goal_theta2, goal_theta3, goal_beta = new_theta1, new_theta2, new_theta3, new_beta
+
+            for potential_parent_id in self.__tree_data:
+                potential_parent = self.__tree_data[potential_parent_id]
+                new_theta1 = potential_parent.get_theta1()
+                new_theta2 = potential_parent.get_theta2()
+                new_theta3 = potential_parent.get_theta3()
+                new_beta = potential_parent.get_beta()
+                angle_difference = np.sqrt(((new_theta1 - c_theta1)**2)+((new_theta2 - c_theta2)**2)+((new_theta3 - c_theta3)**2)+((new_beta - c_beta)**2))
+                if angle_difference < minimum_angle_difference:
+                    minimum_angle_difference = angle_difference
+                    minimum_angle_parent_id = potential_parent_id
+                    goal_theta1, goal_theta2, goal_theta3, goal_beta = new_theta1, new_theta2, new_theta3, new_beta
 
             delta_theta1 = goal_theta1 - c_theta1
             delta_theta2 = goal_theta2 - c_theta2
@@ -244,7 +246,7 @@ class rrt_tree(Node):
 
 
             self.__tree_data[current_id] = state_dto(next_theta1, next_theta2, next_theta3, next_beta, current_id, minimum_angle_parent_id)
-
+            self.__tree_data[minimum_angle_parent_id].add_child_id(current_id)
 
 
 
@@ -259,9 +261,34 @@ class rrt_tree(Node):
 
 
 
-        
+        self.__generated = True
         response.success = True
         return response
+    
+    def rewire(self):
+        if self.__generated:
+
+
+            # this radius is twice the theoretical maximum conseptual distance from the previous state
+            radius_of_rewire = 4*self.__max_delta
+            
+
+            for current_state_id in self.__tree_data:
+                current_state = self.__tree_data[current_state_id]
+                current_theta1 = current_state.get_theta1()
+                current_theta2 = current_state.get_theta2()
+                current_theta3 = current_state.get_theta3()
+                current_beta = current_state.get_beta()
+
+                for next_state_id in self.__tree_data:
+                    next_state = self.__tree_data[next_state_id]
+
+                        
+
+
+
+
+
 def main(args=None):
     '''
         main function, starts the node

@@ -20,7 +20,7 @@ class state_dto:
                 Ma_p : Maniplator poss -> type tuple (x,y,z)
         '''
         self.__id = my_id
-        self.__parent_id = parent_id
+        self.__parents_id = [parent_id]
         self.__children_id = []
         self.__theta1 = theta1
         self.__theta2 = theta2
@@ -92,20 +92,37 @@ class state_dto:
         # pylint: disable=missing-function-docstring
         self.__vaild = vaild
     def set_id(self, my_id:str):
+        # pylint: disable=missing-function-docstring
         self.__id = my_id
     def get_my_id(self):
+        # pylint: disable=missing-function-docstring
         return self.__id
-    def get_parent_id(self):
-        return self.__parent_id
-    def set_parent_id(self, parent_id:str):
-        self.__parent_id = parent_id
+    def get_og_parent_id(self):
+        # pylint: disable=missing-function-docstring
+        return self.__parents_id[0]
+    
+    def get_parents_id(self):
+        # pylint: disable=missing-function-docstring
+        return self.__parents_id
+
+    def set_og_parent_id(self, parent_id:str):
+        # pylint: disable=missing-function-docstring
+        self.__parents_id[0] = parent_id
+    def add_parent_id(self, parent_id:str):
+        if self.__children_id.count(parent_id) == 0 and self.__parents_id.count(parent_id) == 0 and parent_id != self.__id and parent_id != "root":
+            self.__parents_id.append(parent_id)
+
+
     def add_child_id(self, child_id:str):
-        if self.__children_id.count(child_id) == 0:
+        # pylint: disable=missing-function-docstring
+        if self.__children_id.count(child_id) == 0 and self.__parents_id.count(child_id) == 0 and child_id != self.__id and child_id != "root":
             self.__children_id.append(child_id)
     def remove_child_id(self, child_id:str):
+        # pylint: disable=missing-function-docstring
         if self.__children_id.count(child_id) != 0:
             self.__children_id.remove(child_id)
-    def get_childred_id(self):
+    def get_children_id(self):
+        # pylint: disable=missing-function-docstring
         return self.__children_id
     def __str__(self) -> str:
         '''
