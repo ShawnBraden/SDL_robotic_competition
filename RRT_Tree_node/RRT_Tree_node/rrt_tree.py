@@ -94,14 +94,14 @@ class rrt_tree(Node):
         super().__init__('state_location_service_test_client')
 
         #set up service for requesting the state calculations
-        self.cli = self.create_client(ArmyStateService, 'army_state_service')
-        while not self.cli.wait_for_service(timeout_sec=1.0):
-            self.get_logger().info('service not available, waiting again...')
-        self.req = ArmyStateService.Request()
-        self.future = None # define for future use
+        # self.cli = self.create_client(ArmyStateService, 'army_state_service')
+        # while not self.cli.wait_for_service(timeout_sec=1.0):
+        #     self.get_logger().info('service not available, waiting again...')
+        # self.req = ArmyStateService.Request()
+        # self.future = None # define for future use
 
         #create a subscriber to collect the pos_request publisher
-        self.subcription =  self.create_subscription(PoseRequestPub, 'pose_request', self.listener_callback, 10)
+        # self.subcription =  self.create_subscription(PoseRequestPub, 'pose_request', self.listener_callback, 10)
 
         #set up call back group to handle the RRT creations
         self.__rrt_cb = MutuallyExclusiveCallbackGroup()
@@ -179,6 +179,7 @@ class rrt_tree(Node):
         print('Called rrt')
 
         for i in range(self.__itterations):
+
             current_id = str(self.__current_id)
             c_theta1, c_theta2, c_theta3, c_beta = self.generate_random_angles()
             minimum_angle_difference = float('inf')
@@ -197,7 +198,9 @@ class rrt_tree(Node):
                 angle_difference = np.sqrt(((new_theta1 - c_theta1)**2)+((new_theta2 - c_theta2)**2)+((new_theta3 - c_theta3)**2)+((new_beta - c_beta)**2))
                 if angle_difference < minimum_angle_difference:
                     minimum_angle_difference = angle_difference
+                    print(f"key = {potential_parent_id}")
                     minimum_angle_parent_id = potential_parent_id
+                    print(f"key = {minimum_angle_parent_id}")
                     goal_theta1, goal_theta2, goal_theta3, goal_beta = new_theta1, new_theta2, new_theta3, new_beta
 
             delta_theta1 = goal_theta1 - c_theta1
@@ -243,17 +246,11 @@ class rrt_tree(Node):
             elif (next_beta > self.__max_beta):
                 next_beta = self.__max_beta
 
-
-
-            self.__tree_data[current_id] = state_dto(next_theta1, next_theta2, next_theta3, next_beta, current_id, minimum_angle_parent_id)
-            self.__tree_data[minimum_angle_parent_id].add_child_id(current_id)
-
-
-
-
-
-
+            #print(f"key = {minimum_angle_parent_id}")
+            if len(self.__tree_data) != 0:
+                self.__tree_data[current_id] = state_dto(next_theta1, next_theta2, next_theta3, next_beta, current_id, minimum_angle_parent_id)
             
+                self.__tree_data[minimum_angle_parent_id].add_child_id(current_id)
             
             self.__current_id += 1
 
@@ -265,7 +262,7 @@ class rrt_tree(Node):
         response.success = True
         return response
     
-    def rewire(self):
+    def rewire(self, max_conceptual_distance):
         if self.__generated:
 
 
@@ -282,6 +279,13 @@ class rrt_tree(Node):
 
                 for next_state_id in self.__tree_data:
                     next_state = self.__tree_data[next_state_id]
+                    conceptual_distance = np.sqrt(((next_state.get_theta1()-current_state.get_theta1())**2)+
+                                                  ((next_state.get_theta2()-current_state.get_theta2())**2)+
+                                                  ((next_state.get_theta3()-current_state.get_theta3())**2)+
+                                                  ((next_state.get_beta()-current_state.get_beta())**2))
+                    if (conceptual_distance <= max_conceptual_distance):
+                        print("here")
+
 
                         
 
