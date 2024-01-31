@@ -1,7 +1,7 @@
 '''
     This class is used for passing information on a single state of the robot arm
 '''
-import numpy
+import numpy as np
 
 class state_dto:
     '''
@@ -76,16 +76,16 @@ class state_dto:
     def set_beta(self, beta:float):
         # pylint: disable=missing-function-docstring
         self.__beta = beta
-    def set_X1_p(self, X1_p:numpy.array):
+    def set_X1_p(self, X1_p:np.array):
         # pylint: disable=missing-function-docstring
         self.__X1_p = X1_p
-    def set_X2_p(self, X2_p:numpy.array):
+    def set_X2_p(self, X2_p:np.array):
         # pylint: disable=missing-function-docstring
         self.__X2_p = X2_p
-    def set_X3_p(self, X3_p:numpy.array):
+    def set_X3_p(self, X3_p:np.array):
         # pylint: disable=missing-function-docstring
         self.__X3_p = X3_p
-    def set_Ma_p(self, Ma_p:numpy.array):
+    def set_Ma_p(self, Ma_p:np.array):
         # pylint: disable=missing-function-docstring
         self.__Ma_p = Ma_p
     def set_vaild(self, vaild:bool):

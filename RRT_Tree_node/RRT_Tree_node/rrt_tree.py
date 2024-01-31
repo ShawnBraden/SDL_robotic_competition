@@ -22,14 +22,13 @@ from state_sim_interface.msg import PoseRequestPub #pylint: disable=e0401
 from state_space_algo_pub.DTOs.state_dto import state_dto #pylint: disable=e0401
 
 #python imports
-import numpy
 import threading
 import time
 
 #create function pointers to make things esiar to code and read
-cos = numpy.cos
-sin = numpy.sin
-matix = numpy.array
+cos = np.cos
+sin = np.sin
+matix = np.array
 
 class rrt_tree(Node):
     '''
@@ -37,7 +36,8 @@ class rrt_tree(Node):
         You can ask it for a path between two poins, it will then calculate 
         it and return the path.
     '''
-    def __init__(self, itterations : int = 10, seed : int = 10, max_delta : float = np.pi/90, L1 : float = 10, L2 : float = 10, L3 : float = 10,  min_theta1 : float = 0, min_theta2 : float = 0, min_theta3 : float = 0, min_beta : float = 0, max_theta1 : float = numpy.pi/2, max_theta2 : float = numpy.pi/2, max_theta3 : float = numpy.pi/2, max_beta : float = 2*numpy.pi) -> None:
+    def __init__(self, itterations : int = 10, seed : int = 10, max_delta : float = np.pi/90, L1 : float = 10, L2 : float = 10, L3 : float = 10,  min_theta1 : float = 0, min_theta2 : float = 0, min_theta3 : float = 0, min_beta : float = 0, max_theta1 : float = np.pi/2, max_theta2 : float = np.pi/2, max_theta3 : float = np
+                 .pi/2, max_beta : float = 2*np.pi) -> None:
         '''
             Parameters:
                 itterations : Number of itterations the tree runs for -> int
@@ -176,6 +176,8 @@ class rrt_tree(Node):
     def create_rrt(self, request, response):
         seed = request.seed
         random.seed(seed)
+        i_theta1, i_theta2, i_theta3, i_beta = self.generate_random_angles()
+        self.__tree_data["root"] = state_dto(i_theta1, i_theta2, i_theta3, i_beta, "root", " ")
         print('Called rrt')
 
         for i in range(self.__itterations):
