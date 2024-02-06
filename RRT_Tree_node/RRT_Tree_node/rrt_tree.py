@@ -36,7 +36,7 @@ class rrt_tree(Node):
         You can ask it for a path between two poins, it will then calculate 
         it and return the path.
     '''
-    def __init__(self, itterations : int = 10, seed : int = 10, max_delta : float = np.pi/90, L1 : float = 10, L2 : float = 10, L3 : float = 10,  min_theta1 : float = 0, min_theta2 : float = 0, min_theta3 : float = 0, min_beta : float = 0, max_theta1 : float = np.pi/2, max_theta2 : float = np.pi/2, max_theta3 : float = np
+    def __init__(self, itterations : int = 100000, seed : int = 10, max_delta : float = np.pi/90, L1 : float = 10, L2 : float = 10, L3 : float = 10,  min_theta1 : float = 0, min_theta2 : float = 0, min_theta3 : float = 0, min_beta : float = 0, max_theta1 : float = np.pi/2, max_theta2 : float = np.pi/2, max_theta3 : float = np
                  .pi/2, max_beta : float = 2*np.pi) -> None:
         '''
             Parameters:
@@ -200,9 +200,9 @@ class rrt_tree(Node):
                 angle_difference = np.sqrt(((new_theta1 - c_theta1)**2)+((new_theta2 - c_theta2)**2)+((new_theta3 - c_theta3)**2)+((new_beta - c_beta)**2))
                 if angle_difference < minimum_angle_difference:
                     minimum_angle_difference = angle_difference
-                    print(f"key = {potential_parent_id}")
+
                     minimum_angle_parent_id = potential_parent_id
-                    print(f"key = {minimum_angle_parent_id}")
+
                     goal_theta1, goal_theta2, goal_theta3, goal_beta = new_theta1, new_theta2, new_theta3, new_beta
 
             delta_theta1 = goal_theta1 - c_theta1
@@ -256,8 +256,11 @@ class rrt_tree(Node):
             
             self.__current_id += 1
 
-
-
+        print(self.__tree_data["root"].get_children_id())
+        print(self.__tree_data["0"].get_children_id())
+        print(self.__tree_data["1"].get_children_id())
+        print(self.__tree_data["2"].get_children_id())
+        print(self.__tree_data["3"].get_children_id())
 
 
         self.__generated = True
@@ -286,6 +289,9 @@ class rrt_tree(Node):
                                                   ((next_state.get_theta3()-current_state.get_theta3())**2)+
                                                   ((next_state.get_beta()-current_state.get_beta())**2))
                     if (conceptual_distance <= max_conceptual_distance):
+                        current_state.add_child_id(next_state_id)
+                        next_state.add_parent_id(current_state_id)
+
                         print("here")
 
 
