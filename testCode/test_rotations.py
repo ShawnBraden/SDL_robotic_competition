@@ -53,13 +53,13 @@ def rotate_on_camera_pos(camera_pos, messarued_vector, theata, beta):
 
 if __name__ == '__main__':
     pos = np.array([0, 0, 0])
-    data_point = np.array([1, 2, 3])
-    # theata =  - np.pi / 2 # up down angle of the cammera
-    theata =  0 # up down angle of the cammera
-    # beta = np.pi / 2  # rotations of the cammera
+    # data_point = np.array([1, 2, 3])
+    theata =  - np.pi / 2 # up down angle of the cammera
+    #   theata =  0 # up down angle of the cammera
+    #beta = np.pi / 2  # rotations of the cammera
     beta = 0  # rotations of the cammera
-    val = rotate_on_camera_pos(pos, data_point, theata, -beta)
-    print(f"Golbal locations {val}, camera pos {pos}, data point {data_point}, theta {theata} beta {beta}")
+    # val = rotate_on_camera_pos(pos, data_point, theata, -beta)
+    # print(f"Golbal locations {val}, camera pos {pos}, data point {data_point}, theta {theata} beta {beta}")
 
     # Configure depth and color streams
     pipeline = rs.pipeline()    
