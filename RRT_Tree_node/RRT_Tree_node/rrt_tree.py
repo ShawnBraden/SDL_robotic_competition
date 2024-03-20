@@ -173,8 +173,10 @@ class rrt_tree(Node):
         beta = (random.random() * (self.__max_beta - self.__min_beta)) + self.__min_beta
 
         return theta1, theta2, theta3, beta
+    
     def create_rrt(self, request, response):
         seed = request.seed
+        print(seed)
         random.seed(seed)
         i_theta1, i_theta2, i_theta3, i_beta = self.generate_random_angles()
         self.__tree_data["root"] = state_dto(i_theta1, i_theta2, i_theta3, i_beta, "root", " ")
@@ -197,7 +199,9 @@ class rrt_tree(Node):
                 new_theta2 = potential_parent.get_theta2()
                 new_theta3 = potential_parent.get_theta3()
                 new_beta = potential_parent.get_beta()
-                angle_difference = np.sqrt(((new_theta1 - c_theta1)**2)+((new_theta2 - c_theta2)**2)+((new_theta3 - c_theta3)**2)+((new_beta - c_beta)**2))
+                angle_difference = np.sqrt(
+                    ((new_theta1 - c_theta1)**2)+((new_theta2 - c_theta2)**2)+((new_theta3 - c_theta3)**2)+
+                    ((new_beta - c_beta)**2))
                 if angle_difference < minimum_angle_difference:
                     minimum_angle_difference = angle_difference
 
@@ -205,10 +209,10 @@ class rrt_tree(Node):
 
                     goal_theta1, goal_theta2, goal_theta3, goal_beta = new_theta1, new_theta2, new_theta3, new_beta
 
-            delta_theta1 = goal_theta1 - c_theta1
-            delta_theta2 = goal_theta2 - c_theta2
-            delta_theta3 = goal_theta3 - c_theta3
-            delta_beta = goal_beta - c_beta
+            delta_theta1 = c_theta1 - goal_theta1 
+            delta_theta2 = c_theta2 - goal_theta2
+            delta_theta3 = c_theta3 - goal_theta3
+            delta_beta = c_beta - goal_beta
                 # correct changes in angles that are greater than the maximum
             if abs(delta_theta1) > self.__max_delta:
                 delta_theta1 = (delta_theta1/abs(delta_theta1))*self.__max_delta
@@ -222,10 +226,10 @@ class rrt_tree(Node):
             if abs(delta_beta) > self.__max_delta:
                 delta_beta = (delta_beta/abs(delta_beta))*self.__max_delta
 
-            next_theta1 = c_theta1 + delta_theta1
-            next_theta2 = c_theta2 + delta_theta2
-            next_theta3 = c_theta3 + delta_theta3
-            next_beta = c_beta + delta_beta
+            next_theta1 = goal_theta1 + delta_theta1
+            next_theta2 = goal_theta2 + delta_theta2
+            next_theta3 = goal_theta3 + delta_theta3
+            next_beta = goal_beta + delta_beta
 
             # make sure that the new angles don't exceed the limits
             if (next_theta1 < self.__min_theta1):
