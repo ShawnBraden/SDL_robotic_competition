@@ -3,6 +3,8 @@ import math
 import time
 import cv2
 import pyrealsense2 as rs
+from global_map import global_map_obj
+
 def rotation_matrix_x(angle):
     """
     Returns the rotation matrix for rotation about the x-axis by the given angle (in radians).
@@ -52,10 +54,12 @@ def rotate_on_camera_pos(camera_pos, messarued_vector, theata, beta):
     return camera_pos + rotation_z_y
 
 if __name__ == '__main__':
+    map_obj = global_map_obj(resolution=0.01)
+
     pos = np.array([0, 0, 0])
     # data_point = np.array([1, 2, 3])
-    theata =  - np.pi / 2 # up down angle of the cammera
-    #   theata =  0 # up down angle of the cammera
+    # theata =  - np.pi / 2 # up down angle of the cammera
+    theata =  0 # up down angle of the cammera
     #beta = np.pi / 2  # rotations of the cammera
     beta = 0  # rotations of the cammera
     # val = rotate_on_camera_pos(pos, data_point, theata, -beta)
@@ -128,8 +132,10 @@ if __name__ == '__main__':
     verts = np.asanyarray(v).view(np.float32).reshape(-1, 3)  # xyz
     texcoords = np.asanyarray(t).view(np.float32).reshape(-1, 2)  # uv
     
-    file = open('test.txt', 'w+')
+    # file = open('test.txt', 'w')
     for v_list in verts:
         val = rotate_on_camera_pos(pos, v_list, theata, -beta)
-        file.write(f"Golbal locations {val}, camera pos {pos}, data point {data_point}, theta {theata} beta {beta}\n")
-    file.close()
+        # file.write(f"{val}\n")
+        map_obj.set_pos(val[0], val[1], val[2])
+    # file.close()
+    map_obj.display_graph()
