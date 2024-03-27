@@ -12,7 +12,7 @@ class global_map_obj():
         self.__max_z = int(length / resolution)
 
         # Create 3D NumPy array filled with zeros
-        self.__map_obj = np.zeros((self.__max_x, self.__max_y, self.__max_z))
+        self.__map_obj = np.zeros((self.__max_x, self.__max_y, self.__max_z), dtype=np.bool)
     def set_pos(self, x, y, z):
         if not (x == 0 and y == 0 and z == 0):
             x = int((x / self.__resolution) + (self.__max_x)/ 2) - 1

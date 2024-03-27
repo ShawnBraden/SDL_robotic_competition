@@ -54,7 +54,7 @@ def rotate_on_camera_pos(camera_pos, messarued_vector, theata, beta):
     return camera_pos + rotation_z_y
 
 if __name__ == '__main__':
-    map_obj = global_map_obj(resolution=0.01)
+    map_obj = global_map_obj(resolution=0.0025)
 
     pos = np.array([0, 0, 0])
     # data_point = np.array([1, 2, 3])
@@ -138,4 +138,5 @@ if __name__ == '__main__':
         # file.write(f"{val}\n")
         map_obj.set_pos(val[0], val[1], val[2])
     # file.close()
+    print('------ Collected Samples ------')
     map_obj.display_graph()
