@@ -54,14 +54,9 @@ def rotate_on_camera_pos(camera_pos, messarued_vector, theata, beta):
     return camera_pos + rotation_z_y
 
 if __name__ == '__main__':
-    map_obj = global_map_obj(resolution=0.0025)
+    map_obj = global_map_obj(resolution=0.05)
 
-    pos = np.array([0, 0, 0])
-    # data_point = np.array([1, 2, 3])
-    # theata =  - np.pi / 2 # up down angle of the cammera
-    theata =  0 # up down angle of the cammera
-    #beta = np.pi / 2  # rotations of the cammera
-    beta = 0  # rotations of the cammera
+    
     # val = rotate_on_camera_pos(pos, data_point, theata, -beta)
     # print(f"Golbal locations {val}, camera pos {pos}, data point {data_point}, theta {theata} beta {beta}")
 
@@ -88,55 +83,67 @@ if __name__ == '__main__':
     # Start streaming
     pipeline.start(config)
 
-    # Get stream profile and camera intrinsics
-    profile = pipeline.get_active_profile()
-    depth_profile = rs.video_stream_profile(profile.get_stream(rs.stream.depth))
-    depth_intrinsics = depth_profile.get_intrinsics()
-    w, h = depth_intrinsics.width, depth_intrinsics.height
+    for i in range(4):
+        x = float(input("Enter the maximum value for X: "))
+        y = float(input("Enter the maximum value for Y: "))
+        z = float(input("Enter the maximum value for Z: "))
+        pos = np.array([x, y, z])
+        # data_point = np.array([1, 2, 3])
+        # theata =  - np.pi / 2 # up down angle of the cammera
+        theata =  0 # up down angle of the cammera
+        #beta = np.pi / 2  # rotations of the cammera
+        beta = 0  # rotations of the cammera
 
-    # # Processing blocks
-    pc = rs.pointcloud()
-    decimate = rs.decimation_filter()
-    decimate.set_option(rs.option.filter_magnitude, 2)
-    colorizer = rs.colorizer()
+        # Get stream profile and camera intrinsics
+        profile = pipeline.get_active_profile()
+        depth_profile = rs.video_stream_profile(profile.get_stream(rs.stream.depth))
+        depth_intrinsics = depth_profile.get_intrinsics()
+        w, h = depth_intrinsics.width, depth_intrinsics.height
 
-    # Wait for a coherent pair of frames: depth and color
-    frames = pipeline.wait_for_frames()
+        # # Processing blocks
+        pc = rs.pointcloud()
+        decimate = rs.decimation_filter()
+        decimate.set_option(rs.option.filter_magnitude, 2)
+        colorizer = rs.colorizer()
 
-    depth_frame = frames.get_depth_frame()
-    color_frame = frames.get_color_frame()
+        # Wait for a coherent pair of frames: depth and color
+        frames = pipeline.wait_for_frames()
 
-    depth_frame = decimate.process(depth_frame)
+        depth_frame = frames.get_depth_frame()
+        color_frame = frames.get_color_frame()
 
-    # Grab new intrinsics (may be changed by decimation)
-    depth_intrinsics = rs.video_stream_profile(
-        depth_frame.profile).get_intrinsics()
-    w, h = depth_intrinsics.width, depth_intrinsics.height
+        depth_frame = decimate.process(depth_frame)
 
-    depth_image = np.asanyarray(depth_frame.get_data())
-    color_image = np.asanyarray(color_frame.get_data())
+        # Grab new intrinsics (may be changed by decimation)
+        depth_intrinsics = rs.video_stream_profile(
+            depth_frame.profile).get_intrinsics()
+        w, h = depth_intrinsics.width, depth_intrinsics.height
 
-    depth_colormap = np.asanyarray(
-        colorizer.colorize(depth_frame).get_data())
+        depth_image = np.asanyarray(depth_frame.get_data())
+        color_image = np.asanyarray(color_frame.get_data())
 
-    # if state.color:
-    #     mapped_frame, color_source = color_frame, color_image
-    # else:
-    mapped_frame, color_source = depth_frame, depth_colormap
+        depth_colormap = np.asanyarray(
+            colorizer.colorize(depth_frame).get_data())
 
-    points = pc.calculate(depth_frame)
-    pc.map_to(mapped_frame)
+        # if state.color:
+        #     mapped_frame, color_source = color_frame, color_image
+        # else:
+        mapped_frame, color_source = depth_frame, depth_colormap
 
-    # Pointcloud data to arrays
-    v, t = points.get_vertices(), points.get_texture_coordinates()
-    verts = np.asanyarray(v).view(np.float32).reshape(-1, 3)  # xyz
-    texcoords = np.asanyarray(t).view(np.float32).reshape(-1, 2)  # uv
-    
-    # file = open('test.txt', 'w')
-    for v_list in verts:
-        val = rotate_on_camera_pos(pos, v_list, theata, -beta)
-        # file.write(f"{val}\n")
-        map_obj.set_pos(val[0], val[1], val[2])
-    # file.close()
-    print('------ Collected Samples ------')
+        points = pc.calculate(depth_frame)
+        pc.map_to(mapped_frame)
+
+        # Pointcloud data to arrays
+        v, t = points.get_vertices(), points.get_texture_coordinates()
+        verts = np.asanyarray(v).view(np.float32).reshape(-1, 3)  # xyz
+        texcoords = np.asanyarray(t).view(np.float32).reshape(-1, 2)  # uv
+        
+        # file = open('test.txt', 'w')
+        for v_list in verts:
+            val = rotate_on_camera_pos(pos, v_list, theata, -beta)
+            # file.write(f"{val}\n")
+            map_obj.set_pos(val[0], val[1], val[2])
+        # file.close()
+        print('------ Collected Samples ------')
+    print('------ Creating maps ------')
     map_obj.display_graph()
