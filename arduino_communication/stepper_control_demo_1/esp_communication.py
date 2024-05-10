@@ -1,4 +1,3 @@
-
 import websocket
 import time
 
@@ -9,17 +8,15 @@ ws_server_address = "ws://<IP_OF_ESP32>:81"
 ws = websocket.WebSocket()
 ws.connect(ws_server_address)
 
-# Example usage
-#send_command('100')
+angle = input('angle: ')
 
-direction = input('direction? ')
+ws.send(str(angle))
 
-ws.send(direction)
-
+# Receive a message from the server (blocking call)
 message = ws.recv()
 
 # Process the received message
 print("Received message:", message)
 
 # Close WebSocket connection
-ws.close()            
+ws.close() 
