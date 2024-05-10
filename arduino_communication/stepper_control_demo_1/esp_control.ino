@@ -1,4 +1,3 @@
-
 #include <WiFi.h>
 #include <WebSocketsServer.h>
 
@@ -7,8 +6,8 @@
 #define STEPPER_PIN_3 14
 #define STEPPER_PIN_4 12
 
-const char* ssid = "ALAN_NETWORK";
-const char* password = "Zim77har";
+const char* ssid = "<NETWORK_SSID>";
+const char* password = "<NETWORD_PASSWORD>";
 
 int step_number = 0;
 bool turning_right = false;
