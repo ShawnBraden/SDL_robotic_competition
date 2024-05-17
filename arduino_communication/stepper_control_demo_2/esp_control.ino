@@ -96,7 +96,7 @@ double getFakeAngle(double angle)
 
 double getAngle()
 {
-    return angle;
+    return 0;
 }
 
 void turnToAngle(double angle)
