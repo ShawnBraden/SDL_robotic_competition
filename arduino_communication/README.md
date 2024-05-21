@@ -2,6 +2,6 @@
 
 This is a markdown test
 
-''' console
+'''bash
 git status
 '''
