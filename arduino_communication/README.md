@@ -2,6 +2,6 @@
 
 this is a test of markdown
 
-'''bash
+```bash
 echo 'hello world'
-'''
+```
